@@ -29,7 +29,7 @@ class App extends Component {
     }))
   }
 
-  closeFoodModal = ({ meal, day }) => {
+  closeFoodModal = () => {
     this.setState(() => ({
       foodModalOpen: false,
       food: null,
@@ -47,10 +47,10 @@ class App extends Component {
     this.setState(() => ({ loadingFood: true }))
 
     fetchRecipes(this.input.value)
-      .then((food) => this.setState({
+      .then((food) => this.setState(() => ({
         food,
         loadingFood: false
-      }))
+      })))
   }
 
   openIngredientsModal = () => this.setState(() => ({ ingredientsModalOpen: true }))
@@ -107,11 +107,8 @@ class App extends Component {
                         <img src={meals[meal].image} alt={meals[meal].label} />
                         <button onClick={() => remove({ day, meal })}/>
                       </div>
-                    : <button className='icon-btn'>
-                        <CalendarIcon
-                          onClick={() => this.openFoodModal({ meal, day })}
-                          size={100}
-                        />
+                    : <button onClick={() => this.openFoodModal({ meal, day })} className='icon-btn'>
+                        <CalendarIcon size={100} />
                       </button>
                   }
                 </li>
@@ -152,7 +149,7 @@ class App extends Component {
                       <ArrowRightIcon size={30} />
                     </button>
                   </div>
-                  {food && (
+                  {food !== null && (
                     <FoodList
                       food={food}
                       onSelect={(recipe) => {
@@ -192,7 +189,7 @@ function mapStateToProps({ calendar, food }){
       day,
       meals: Object.keys(calendar[day]).reduce((meals, meal) => {
         meals[meal] = calendar[day][meal]
-          ? calendar[day][meal]
+          ? food[calendar[day][meal]]
           : null
 
         return meals
